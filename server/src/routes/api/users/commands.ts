@@ -2,8 +2,7 @@ import { validate } from 'class-validator';
 import { Context, Middleware } from 'koa';
 import { assign } from 'lodash';
 
-import { AddQualification, CreateUser, DeleteQualification, DeleteUser, UpdateName, UserRepository } from '../../../services/user-repository.service';
-
+import { AddQualification, CreateUser, DeleteQualification, DeleteUser, MergeUser, UpdateName, UserRepository } from '../../../services/user-repository.service';
 
 function checkedCommand<T>(type: new() => T, action: (body: T) => any): Middleware {
     return async (ctx, next) => {
@@ -36,7 +35,6 @@ function createUser(ctx: Context, cmd: CreateUser) {
     ctx.set('Location', `/api/users/${user.id}`);
 }
 
-
 export function commands(): Middleware {
     return async (ctx, next) => {
         const users = ctx.injector.get(UserRepository);
@@ -54,6 +52,8 @@ export function commands(): Middleware {
                 checkedCommand(AddQualification, (cmd: AddQualification) => users.addQualification(cmd)),
             'application/vnd.in.biosite.delete-qualification+json':
                 checkedCommand(DeleteQualification, (cmd: DeleteQualification) => users.deleteQualification(cmd)),
+            'application/vnd.in.biosite.merge-users+json':
+                checkedCommand(MergeUser, cmd => users.merge(ctx, cmd))
         };
 
         const contentType: string = ctx.request.headers['content-type'];
