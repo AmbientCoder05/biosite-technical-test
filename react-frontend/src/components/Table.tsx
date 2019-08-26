@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import { css, jsx } from "@emotion/core";
 
-import { LargeText } from "styles/Text";
+import { LargeText, SmallText } from "styles/Text";
 
 interface TableProps {
     data: { [key: string]: string }[];
@@ -27,43 +27,53 @@ const Table: FC<TableProps> = ({ data, title }) => {
             ) : (
                 ""
             )}
-            <table
-                css={css`
-                    background-color: white;
-                    border-collapse: collapse;
-                    border-radius: 5px;
-                    margin: 10px auto;
-                    th,
-                    td {
-                        padding: 10px;
-                    }
-                    thead > tr,
-                    tbody > tr:not(:last-of-type) {
-                        border: 1px solid rgba(0, 0, 0, 0.3);
-                        border-width: 0 0 1px 0;
-                    }
-                    tbody > tr {
-                        opacity: 0.7;
-                    }
-                `}
-            >
-                <thead>
-                    <tr>
-                        {headers.map(header => (
-                            <th key={header}>{header}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((row, i) => (
-                        <tr key={i}>
-                            {Object.values(row).map((column, j) => (
-                                <td key={j}>{column}</td>
+            {data.length ? (
+                <table
+                    css={css`
+                        background-color: white;
+                        border-collapse: collapse;
+                        border-radius: 5px;
+                        margin: 10px auto;
+                        th,
+                        td {
+                            padding: 10px;
+                        }
+                        thead > tr,
+                        tbody > tr:not(:last-of-type) {
+                            border: 1px solid rgba(0, 0, 0, 0.3);
+                            border-width: 0 0 1px 0;
+                        }
+                        tbody > tr {
+                            opacity: 0.7;
+                        }
+                    `}
+                >
+                    <thead>
+                        <tr>
+                            {headers.map(header => (
+                                <th key={header}>{header}</th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {data.map((row, i) => (
+                            <tr key={i}>
+                                {Object.values(row).map((column, j) => (
+                                    <td key={j}>{column}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p
+                    css={css`
+                        ${SmallText};
+                    `}
+                >
+                    No data found
+                </p>
+            )}
         </div>
     );
 };
