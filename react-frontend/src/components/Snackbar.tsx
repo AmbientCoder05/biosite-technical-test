@@ -71,10 +71,8 @@ const Snackbar: FC<SnackbarProps> = ({
                         <Button
                             transparent
                             onClick={() => {
-                                if (onTimeout) {
-                                    clearTimeout(timeout);
-                                    hide();
-                                }
+                                clearTimeout(timeout);
+                                hide();
                             }}
                         >
                             Dismiss
