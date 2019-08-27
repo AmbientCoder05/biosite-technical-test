@@ -1,8 +1,9 @@
 /** @jsx jsx */
 import Color from "color";
 import { css, jsx } from "@emotion/core";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import PropTypes from "prop-types";
+import { Transition } from "react-transition-group";
 
 import Button from "components/Button";
 
@@ -25,42 +26,63 @@ const Snackbar: FC<SnackbarProps> = ({
     timer = 5000,
     type = "success"
 }) => {
-    const timeout = onTimeout ? setTimeout(onTimeout, timer) : 0;
+    const [display, setDisplay] = useState(true);
+    const hide: Function = () => setDisplay(false);
+
     const bg = backgroundColor ? backgroundColor : backgroundColors[type];
     return (
-        <div
-            css={css`
-                position: absolute;
-                left: 50%;
-                bottom: 20px;
-                transform: translateX(-50%);
-                text-align: center;
-                display: inline-block;
-                background-color: ${bg};
-                color: ${Color(bg).isDark() ? "white" : "black"};
-                padding: 15px;
-                border-radius: 5px;
-            `}
+        <Transition
+            in={display}
+            timeout={500}
+            appear
+            unmountOnExit
+            onExited={() => {
+                if (onTimeout) {
+                    onTimeout();
+                }
+            }}
         >
-            <span
-                css={css`
-                    margin-right: 20px;
-                `}
-            >
-                {children}
-            </span>
-            <Button
-                transparent
-                onClick={() => {
-                    if (onTimeout) {
-                        clearTimeout(timeout);
-                        onTimeout();
-                    }
-                }}
-            >
-                Dismiss
-            </Button>
-        </div>
+            {state => {
+                const timeout = onTimeout ? setTimeout(hide, timer) : 0;
+                return (
+                    <div
+                        css={css`
+                            position: absolute;
+                            left: 50%;
+                            bottom: 20px;
+                            transform: translateX(-50%);
+                            text-align: center;
+                            display: inline-block;
+                            background-color: ${bg};
+                            color: ${Color(bg).isDark() ? "white" : "black"};
+                            padding: 15px;
+                            border-radius: 5px;
+                            opacity: ${state === "entered" ? 1 : 0};
+                            transition: opacity 500ms;
+                        `}
+                    >
+                        <span
+                            css={css`
+                                margin-right: 20px;
+                            `}
+                        >
+                            {children}
+                        </span>
+                        <Button
+                            transparent
+                            onClick={() => {
+                                if (onTimeout) {
+                                    clearTimeout(timeout);
+                                    hide();
+                                }
+                            }}
+                        >
+                            Dismiss
+                        </Button>
+                    </div>
+                );
+            }}
+        </Transition>
     );
 };
 Snackbar.propTypes = {

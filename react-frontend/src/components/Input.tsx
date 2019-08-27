@@ -72,6 +72,7 @@ const Input: FC<InputProps> = ({
                     letter-spacing: 2px;
                     flex: 1;
                     direction: rtl;
+                    font-family: "Roboto", sans-serif;
                     ::-webkit-inner-spin-button,
                     ::-webkit-outer-spin-button {
                         -webkit-appearance: none;
@@ -83,6 +84,14 @@ const Input: FC<InputProps> = ({
                     ::-webkit-input-placeholder {
                         color: white;
                         opacity: 0.7;
+                    }
+                    :-webkit-autofill {
+                        box-shadow: 0 0 0 30px ${backgroundColor} inset !important;
+                        -webkit-text-fill-color: ${Color(
+                            backgroundColor
+                        ).isDark()
+                            ? "white"
+                            : "black"} !important;
                     }
                 `}
             />
