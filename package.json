@@ -1,0 +1,23 @@
+{
+  "name": "biosite-technical-test",
+  "version": "1.0.0",
+  "description": "In this repository you will find a technical test representative of the kind of work you might do at  Biosite. We would expect you to spend between 2 and 4 hours on the exercises, depending on your  level of experience.",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently --kill-others \"cd server && npm start\" \"cd react-frontend && npm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmbientCoder05/biosite-technical-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AmbientCoder05/biosite-technical-test/issues"
+  },
+  "homepage": "https://github.com/AmbientCoder05/biosite-technical-test#readme",
+  "dependencies": {
+    "concurrently": "^4.1.2"
+  }
+}

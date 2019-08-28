@@ -1,6 +1,8 @@
-import { IsDateString, IsOptional, IsString, IsUUID, MinLength, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsDateString, IsOptional, IsString, IsUUID, MinLength, ValidateNested } from 'class-validator';
 import { Injectable } from 'injection-js';
-import { clone, find, map, reject } from 'lodash';
+import { compact, clone, find, map, reject } from 'lodash';
+import { Context } from 'koa';
+import { UserMerger } from "./user-merger.service";
 import * as uuid from 'uuid/v4';
 
 
@@ -50,6 +52,12 @@ export class DeleteUser {
     id: string = '';
 }
 
+export class MergeUser {
+    @IsUUID("4", {each: true})
+    @ArrayMinSize(2)
+    ids: string[] = [];
+}
+
 export class UpdateName {
     @IsUUID()
     id: string = '';
@@ -87,6 +95,10 @@ export class UserRepository {
         return find(this.users, {id: id});
     }
 
+    public getAll(ids: string[]): (User | undefined)[] {
+        return map(ids, id => this.get(id));
+    }
+
     public list(): User[] {
         return this.users;
     }
@@ -111,6 +123,25 @@ export class UserRepository {
 
     public delete(command: DeleteUser) {
         this.users = reject(this.users, {id: command.id});
+    }
+
+    /**
+     * Merges all of the users together
+     * @param ctx The koa context
+     * @param cmd The merge user class, containing an array of user ids
+     */
+    public merge(ctx: Context, cmd: MergeUser) {
+        const users = this.getAll(cmd.ids);
+        const compactUsers = compact(users);
+
+        // The compact users arr is a different length than the users arr
+        // Thus, a falsy value must have existed
+        if (users.length !== compactUsers.length) {
+            ctx.status = 400;
+            ctx.body = "An ID does not exist";
+        } else {
+            this.users = [new UserMerger().merge(compactUsers)];
+        }
     }
 
     public updateName(command: UpdateName) {

@@ -1,17 +1,26 @@
-import React from 'react';
-import './App.css';
+import React, { FC } from "react";
+import { Provider } from "react-redux";
+import { hot } from "react-hot-loader/root";
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        Your App Here
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </header>
-    </div>
-  );
-}
+import { css, Global } from "@emotion/core";
 
-export default App;
+import Routes from "./routes";
+
+import store from "store";
+
+const App: FC = () => (
+    <Provider store={store}>
+        <Global
+            styles={css`
+                body {
+                    font-family: "Roboto", sans-serif;
+                    margin: 0;
+                    background-color: #f4f4f4;
+                }
+            `}
+        />
+        <Routes />
+    </Provider>
+);
+
+export default hot(App);
